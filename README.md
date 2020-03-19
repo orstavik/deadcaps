@@ -1,0 +1,2 @@
+# deadcaps
+type faster
