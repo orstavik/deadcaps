@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xkbConfigRegistry SYSTEM "xkb.dtd">
+<xkbConfigRegistry version="1.1">
+    <!--    ...    -->
+    <layoutList>
+        <!--    ...    -->
+        <!--    INSERT THE CODE BELOW    -->
+        <layout>
+            <configItem>
+                <name>deadcaps</name>
+
+                <shortDescription>no</shortDescription>
+                <description>Norwegian deadcaps</description>
+                <languageList>
+                    <iso639Id>nor</iso639Id>
+                    <iso639Id>nob</iso639Id>
+                    <iso639Id>nno</iso639Id>
+                </languageList>
+            </configItem>
+            <variantList>
+                <variant>
+                    <configItem>
+                        <name>deadcaps</name>
+                        <description>Norwegian (deadcaps)</description>
+                    </configItem>
+                </variant>
+                <variant>
+                    <configItem>
+                        <name>deadcaps2</name>
+                        <description>Norwegian (deadcaps2)</description>
+                    </configItem>
+                </variant>
+            </variantList>
+        </layout>
+        <!--    INSERT THE CODE ABOVE    -->
+        <!--    ...    -->
+    </layoutList>
+    <!--    ...    -->
+</xkbConfigRegistry>

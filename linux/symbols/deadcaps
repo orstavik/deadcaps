@@ -1,0 +1,116 @@
+// based on a keyboard map from an 'xkb/symbols/no' file
+
+// DEAD CAPS / DEAD LESS / Altgr NAVI
+// -------------------------------------
+//
+// ┌─────┐
+// │ 2 3 │   2 = dead caps,  3 = dead less
+// │ 1 4 │   1 = Normal,     4 = navigation / editing
+// └─────┘
+// ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┲━━━━━━━━━┓
+// │     │ !   │ "   │ #   │ ¤   │ %   │ &   │ /   │ (   │ )   │ =   │ ?   │ `   ┃         ┃
+// │     │ 1   │ 2   │ 3   │ 4   │ 5   │ 6   │ 7   │ 8   │ 9   │ 0   │ +   │ \   ┃         ┃
+// ┢━━━━━┷━┱───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┺━┳━━━━━━━┫
+// ┃       ┃ Q @ │ W # │ E ? │ R ! │ T & │ Y   │ U   │ I { │ O } │ P ~ │ Å   │     ┃       ┃
+// ┃       ┃ q PD│ w PU│ e Ho│ r En│ t   │ y   │ u   │ i   │ o   │ p   │ å   │     ┃       ┃
+// ┣━━━━━━━┻┱────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┺┓      ┃
+// ┃ caps   ┃ A ( │ S ) │ D [ │ F ' │ G " │ H   │ J / │ K < │ L > │ Ø \ │ Æ   │     ┃      ┃
+// ┃deadcaps┃ a Do│ s Up│ d Le│ f Ri│ g   │ h   │ j BS│ k De│ l   │ ø   │ æ   │     ┃      ┃
+// ┣━━━━━━━┳┹────┬┴────┬┴────┬┴────┬┴────┬┴────┬┴────┬┴────┬┴────┬┴────┬┴────┲┷━━━━━┻━━━━━━┫
+// ┃       ┃dead │ Z + │ X = │ C ] │ V ´ │ B ^ │ N   │ M $ │ ; * │ : | │ _ % ┃             ┃
+// ┃       ┃less │ z z │ x x │ c c │ v v │ b a │ n   │ m   │ ,   │ .   │ -   ┃             ┃
+// ┣━━━━━━━╈━━━━━┷━┳━━━┷━━━┱─┴─────┴─────┴─────┴─────┴─────┴───┲━┷━━━━━╈━━━━━┻━┳━━━━━━━┳━━━┛
+// ┃       ┃       ┃       ┃ ␣                               ⍽ ┃NaviEdi┃       ┃       ┃
+// ┃       ┃       ┃       ┃ ␣           Space               ⍽ ┃NumLock┃       ┃       ┃
+// ┗━━━━━━━┻━━━━━━━┻━━━━━━━┹───────────────────────────────────┺━━━━━━━┻━━━━━━━┻━━━━━━━┛
+// caps	=> dead_voiced_sound    (used as capital shift in .XCompose)
+// shift+caps => caps
+
+// less	=> dead_semivoiced_sound     (used as symbol shift in .XCompose)    //cannot be locked
+
+// altgr => num_lock which triggers navigation keys on keyboard
+
+
+partial alphanumeric_keys
+xkb_symbols "deadcaps" {
+    // I'm Norwegian, so i add this around Norwegian characters
+    include "no(basic)"
+
+    // Set up modifiers.
+    //include "deadcaps(deadcaps_modifiers)"
+
+    // Set up level 3 modifiers. This is done by default in no(basic)
+    //include "level3(modifier_mapping)"
+    include "level3(menu_switch)"
+    // Set up level 5 modifiers.
+    include "level5(modifier_mapping)"
+    //include "level5(ralt_switch)"
+
+    // add numlock on tab
+    //replace key <TAB>  {
+    //    type[Group1] = "TWO_LEVEL",
+    //    symbols[Group1] = [  Num_Lock, Tab  ],
+    //    actions[Group1] = [  LockMods(modifiers=NumLock), NoAction()  ]
+    //};
+    replace key <RALT>  {
+        type[Group1] = "ONE_LEVEL",
+        symbols[Group1] = [  Num_Lock  ],
+        actions[Group1] = [  LockMods(modifiers=NumLock)  ]
+    };
+    // add dead keys for both deadcaps and deadless
+    replace key <CAPS> {
+        type[Group1] = "TWO_LEVEL",
+        symbols[Group1] = [  dead_voiced_sound, Caps_Lock  ],
+        actions[Group1] = [  NoAction(), LockMods(modifiers=Lock)  ]
+    };
+    replace key <LSGT>  { type[Group1] = "ONE_LEVEL", [  dead_semivoiced_sound  ] };
+
+    // Make the following keys capable of using eight levels.
+    // tab is num lock for level_five shift, and shift is preserved/let through.
+    key.type[Group1] = "EIGHT_LEVEL_LEVEL_FIVE_LOCK";
+
+    key <AD01>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Next, Next, Next, Next ]	};
+    key <AD02>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Prior, Prior, Prior, Prior ]	};
+    key <AD03>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Home, Home, Home, Home ]	};
+    key <AD04>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, End, End, End, End ]	};
+    key <AD05>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+
+    key <AD06>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AD07>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AD08>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AD09>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AD10>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+
+
+    key <AC01>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Down, Down, Down, Down ]	};
+    key <AC02>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Up, Up, Up, Up ]	};
+    key <AC03>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Left, Left, Left, Left ]	};
+    key <AC04>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Right, Right, Right, Right ]	};
+    key <AC05>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+
+    key <AC06>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AC07>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, BackSpace, BackSpace, BackSpace, BackSpace ] };
+    key <AC08>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, Delete, Delete, Delete, Delete ]	};
+    key <AC09>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AC10>  { [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ] };
+
+
+    key <AB01>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, z, z, z, z ]	};
+    key <AB02>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, x, x, x, x ]	};
+    key <AB03>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, c, c, c, c ]	};
+    key <AB04>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, v, v, v, v ]	};
+    key <AB05>  { [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol, a, a, a, a ] };
+
+    key <AB06>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AB07>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AB08>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AB09>	{ [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ]	};
+    key <AB10>  { [  NoSymbol,   NoSymbol,     NoSymbol,     NoSymbol ] };
+};
+
+partial alphanumeric_keys
+xkb_symbols "deadcaps2" {
+    include "deadcaps(deadcaps)"
+
+    replace key <AC10>  { type[Group1] = "ONE_LEVEL", [  dead_semivoiced_sound  ] };
+};

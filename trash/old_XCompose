@@ -1,0 +1,53 @@
+# 2020 by Ivar Ørstavik
+# Using dead keys for ergonomics and speed
+#
+# ┌─────┐
+# │ 2 4 │   2 = dead semi,  4 = dead single quote
+# │ 1 3 │   1 = Normal,     3 =
+# └─────┘
+# ┢━━━━━┷━┱───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┴─┬───┺━┳━━━━━━━┫
+# ┃       ┃     │     │     │     │     │     │     │     │     │     │     │     ┃ Enter ┃
+# ┃Tab ↹  ┃ *   │ {   │ [   │ (   │ #   │ ~   │ )   │ ]   │ }   │     │     │     ┃   ⏎   ┃
+# ┣━━━━━━━┻┱────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┴┬────┺┓      ┃
+# ┃        ┃     │     │     │     │     │     │     │     │     │     │     │     ┃      ┃
+# ┃Caps ⇬  ┃ =   │ +   │ ´   │ ' F │ "   │ ?   │ ! J │ /   │ @   │ 2x  │     │     ┃      ┃
+# ┣━━━━━━━┳┹──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┲━━┷━━━━━┻━━━━━━┫
+# ┃       ┃   │     │     │     │     │     │     │     │     │     │     ┃               ┃
+# ┃Shift⇧ ┃   │ |   │ $   │ &   │ <   │ ¤   │ >   │ %   │ \   │ ^   │     ┃  Shift ⇧      ┃
+# ┣━━━━━━━╈━━━┷━━━┳━┷━━━━━╈─────┴─────┴─────┴─────┴─────┴─────╈━━━━━┷━┳━━━┻━━━┳━━━━━━━┳━━━┛
+# ┃       ┃       ┃       ┃ ␣                               ⍽ ┃       ┃       ┃       ┃
+# ┃Ctrl   ┃Meta   ┃Alt    ┃ ␣           Space               ⍽ ┃AltGr ⇮┃Menu   ┃Ctrl   ┃
+# ┗━━━━━━━┻━━━━━━━┻━━━━━━━┹───────────────────────────────────┺━━━━━━━┻━━━━━━━┻━━━━━━━┛
+
+# <dead_iota><dead_iota> <a>  :    "="
+# <dead_iota><dead_iota> <b>  :    "¤"
+# <dead_iota><dead_iota> <c>  :    "&"
+# <dead_iota><dead_iota> <d>  :    "`"
+# <dead_iota><dead_iota> <e>  :    "["
+# <dead_iota><dead_iota> <f>  :    "'"
+# <dead_iota><dead_iota> <g>  :    "\42"    # dblquote
+# <dead_iota><dead_iota> <h>  :    "?"
+# <dead_iota><dead_iota> <i>  :    "]"
+# <dead_iota><dead_iota> <j>  :    "!"
+# <dead_iota><dead_iota> <k>  :    "/"
+# <dead_iota><dead_iota> <l>  :    "@"
+# <dead_iota><dead_iota> <m>  :    "%"
+# <dead_iota><dead_iota> <n>  :    ">"
+# <dead_iota><dead_iota> <o>  :    "}"
+# <dead_iota><dead_iota> <p>  :    "^"
+# <dead_iota><dead_iota> <q>  :    "*"
+# <dead_iota><dead_iota> <r>  :    "("
+# <dead_iota><dead_iota> <s>  :    "+"
+# <dead_iota><dead_iota> <t>  :    "#"
+# <dead_iota><dead_iota> <u>  :    ")"
+# <dead_iota><dead_iota> <v>  :    "<"
+# <dead_iota><dead_iota> <w>  :    "{"
+# <dead_iota><dead_iota> <x>  :    "$"
+# <dead_iota><dead_iota> <y>  :    "~"
+# <dead_iota><dead_iota> <z>  :    "|"
+# <dead_iota><dead_iota> <comma >: "\134" backslash
+#<dead_iota><dead_iota> <period> : "????"   ## this is still free. should remain free?
+
+## AltGr behavior is specified in /usr/share/X11/symbols/no
+# altGr + space = BackSpace
+#<dead_iota><dead_iota> <space>      : "\10" BackSpace
