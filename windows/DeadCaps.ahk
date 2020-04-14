@@ -120,3 +120,15 @@ z::
     Send,Z
     Suspend,On
     return
+,::
+    Send,;
+    Suspend,On
+    return
+.::
+    Send,:
+    Suspend,On
+    return
+-::
+    Send,_
+    Suspend,On
+    return
