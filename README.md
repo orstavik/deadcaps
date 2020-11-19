@@ -44,6 +44,7 @@ The cost in added keystrokes is only for the 1% key combinations where more than
 4. To update both your .XCompose file and available languages, reload X11:
  `sudo systemctl restart display-manager`
 5. in Settings, open languages and add deadcaps and deadcaps2.
+* Debug the keyboard using `xev`.
 
 ### Windows:
 1. download and install AutoHotKey.
