@@ -1,4 +1,4 @@
-# `python-libevdev` + `X11/xkb/symbols/deadcaps3`
+# `python-libevdev` + `X11/xkb/symbols/deadcaps`
 
 1. update the keyboard layout so that the altgr keys are the ones you want on the regular letters.
 2. make a python script that uses libevdev to:
