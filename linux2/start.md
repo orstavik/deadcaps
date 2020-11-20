@@ -284,4 +284,4 @@ if __name__ == "__main__":
 This script is not yet good enough, so it hardcodes this keyboard into the startup command.
 
 4. Open `startup applications` from the task manager and add this script, for example: `sudo python3 ~/Desktop/deadcaps.py /dev/input/event8` 
-   * debug the startup application, do: 'cat /var/log/syslog | grep deadcaps'
+   * debug the startup application, do: `cat /var/log/syslog | grep -B 3 -A 3 deadcaps`
