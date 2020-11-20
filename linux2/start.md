@@ -131,6 +131,13 @@ xkb_symbols "deadcaps" {
 
 ## 2. `deadcaps.py`
 
+Todo: 
+
+1) make the script identify all keyboards automatically, and then add them. a) Add a loop that runs through all the `/dev/input/eventX` and detects their ability. b) Fix the script so that the while loop runs for each of them. c) remove the argument that is added to the file at startup.
+
+2) fix the python startup application. currently it is not working.
+
+
 1. Install `python-libevdev`. Check out the [python-libevdev documentation](https://python-libevdev.readthedocs.io/en/latest/)
     * `sudo apt-get install -y python3-pip`
     * `sudo pip install libevdev`
