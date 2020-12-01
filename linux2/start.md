@@ -131,18 +131,11 @@ xkb_symbols "deadcaps" {
 
 ## 2. `deadcaps.py`
 
-Todo: 
-
-1) make the script identify all keyboards automatically, and then add them. a) Add a loop that runs through all the `/dev/input/eventX` and detects their ability. b) Fix the script so that the while loop runs for each of them. c) remove the argument that is added to the file at startup.
-
-2) fix the python startup application. currently it is not working.
-
-
 1. Install `python-libevdev`. Check out the [python-libevdev documentation](https://python-libevdev.readthedocs.io/en/latest/)
     * `sudo apt-get install -y python3-pip`
     * `sudo pip install libevdev`
 
-2. Make `deadcaps.py` and store it in your folder for startup scripts:
+2. Make `/usr/sbin/deadcaps.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -290,5 +283,45 @@ if __name__ == "__main__":
 [explore the `/dev/input/` folder](https://thehackerdiary.wordpress.com/2017/04/21/exploring-devinput-1/).
 This script is not yet good enough, so it hardcodes this keyboard into the startup command.
 
-4. Open `startup applications` from the task manager and add this script, for example: `sudo python3 ~/Desktop/deadcaps.py /dev/input/event8` 
-   * debug the startup application, do: `cat /var/log/syslog | grep -B 3 -A 3 deadcaps`
+This python program will detect and print all the keyboards on your computer:
+
+```python
+#!/usr/bin/env python3
+#
+# This example illustrate how you can scan the /dev/input/eventX devices
+# and list all the devices that support CAPSLOCK.
+
+
+from pathlib import Path
+import sys
+import libevdev
+
+def has_caps_lock(path) :
+    if not path.stem.startswith('event'):
+        return False
+    with open(path, "rb") as fd:
+        dev = libevdev.Device(fd)
+        return dev.has(libevdev.EV_KEY.KEY_CAPSLOCK)
+    
+
+def devices_with_caps_lock() :
+    return [p for p in Path('/dev/input/').iterdir() if has_caps_lock(p)]
+
+
+def main():
+    for path in devices_with_caps_lock() :
+        print(path)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+4. Open `settings => keyboard shortcut` and add a new keyboard shortcut:
+   * name: `deadcaps`
+   * command: `gnome-terminal -- sudo python3 /usr/sbin/deadcaps.py /dev/input/eventX`
+   * shortcut: `ctrl+F10` (for example).
+
+   The shortcut will open a terminal window and prompt you for the sudo password. By killing this terminal window later, you will terminate the deadcaps program at the same time.
+   
+> Todo: make the deadcaps script automatically add itself to all keyboards.
