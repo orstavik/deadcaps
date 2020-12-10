@@ -325,4 +325,11 @@ if __name__ == "__main__":
    The shortcut will open a terminal window and prompt you for the sudo password. By killing this terminal window later, you will terminate the deadcaps program at the same time.
    
 > Todo: make the deadcaps script automatically add itself to all keyboards.
-> Todo: make the deadless button turn on a special form of navigation. that turns j,k,l, into shift, ctrl, home/pageup/pagedown/end-mode. that way, i could navigate using my four left fingers, while holding down j,k,l as a means to augment that navigation. In this navigation mode, then q is turned into a, so that we have the ctrl+z,x,c,v,a/q available.
+
+> Todo: deadless navigation: a,s,d,f = up,down,left,right(pageup/pagedown/home/end under `alt`). j,k,l = shift, ctrl, alt. that way, i could navigate using my four left fingers, while holding down j,k,l as a means to augment that navigation. In numlock navigation mode,  q = a. this way ctrl+z,x,c,v,a/q is all available.
+
+`<` is converted into numlock. numlock mode turns normal keys into navigation keys. numlock is a normal click once to start, click again to stop, mode. numlock mode will clear any other state in deadcaps.
+1. when numlock, a,s,d,f become arrow keys, and q=a (language map), 
+2. make `<` into `numlock` (try language map, then script),
+3. when numlock j,k,l = ctrl, shift, alt (try language map, then script),
+4. asdf in numlock mode with alt becomes pagedown, pageup, home, end (try language map, then script).
