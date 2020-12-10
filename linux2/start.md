@@ -325,3 +325,4 @@ if __name__ == "__main__":
    The shortcut will open a terminal window and prompt you for the sudo password. By killing this terminal window later, you will terminate the deadcaps program at the same time.
    
 > Todo: make the deadcaps script automatically add itself to all keyboards.
+> Todo: make the deadless button turn on a special form of navigation. that turns j,k,l, into shift, ctrl, home/pageup/pagedown/end-mode. that way, i could navigate using my four left fingers, while holding down j,k,l as a means to augment that navigation.
