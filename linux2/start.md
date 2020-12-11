@@ -10,81 +10,8 @@
 
 1. Make your deadcaps keyboard layout file using: `sudo gedit /usr/share/X11/xkb/symbols/deadcaps`.
 You can debug your configuration using: `xkbcomp -i 12 /usr/share/X11/xkb/symbols/deadcaps $display`.
-Fill this file with the following content:
 
-```
-// based on a keyboard map from an 'xkb/symbols/no' file
-
-default  partial alphanumeric_keys
-xkb_symbols "deadcaps" {
-
-    // Describes the differences between a very simple en_US
-    // keyboard and a Norwegian keyboard with dead key support
-    // and all of ISO-8859-1 characters available.
-
-    include "no(basic)"
-
-    name[Group1]="Norwegian (deadcaps)";
-
-    //latin, latin type2, no basic
-//    key <TLDE>	{ [       bar,    section,    brokenbar,    paragraph ]	};
-//    key <AE01>	{ [         1,     exclam,   exclamdown,  onesuperior ]	};
-//    key <AE02>	{ [         2,   quotedbl,           at,  twosuperior ]	};
-//    key <AE03>	{ [         3, numbersign,     sterling, threesuperior]	};
-//    key <AE04>	{ [         4,   currency,       dollar,   onequarter ]	};
-//    key <AE05>	{ [         5,    percent,      onehalf,    0x1002030 ]	};
-//    key <AE06>	{ [         6,  ampersand,          yen,  fiveeighths ]	};
-//    key <AE07>	{ [         7,      slash,    braceleft,     division ]	};
-//    key <AE08>	{ [         8,  parenleft,  bracketleft, guillemotleft]	};
-//    key <AE09>	{ [         9, parenrigh2t, bracketright, guillemotright] };
-//    key <AE10>	{ [         0,      equal,   braceright,       degree ]	};
-//    key <AE11>	{ [      plus,   question,    plusminus, questiondown ]	};
-//    key <AE12>	{ [ backslash, dead_grave,   dead_acute,      notsign ]	};
-
-    key <AD01>	{ [         q,          Q,     question,  Greek_OMEGA ]	};
-    key <AD02>	{ [         w,          W,   asciitilde,      Lstroke ]	};
-    key <AD03>	{ [         e,          E,         less,         cent ]	};
-    key <AD04>	{ [         r,          R,      greater,    trademark ]	};
-    key <AD05>	{ [         t,          T,   numbersign,        THORN ]	};
-    key <AD06>	{ [         y,          Y,    ampersand,          yen ]	};
-    key <AD07>	{ [         u,          U,           at,      uparrow ]	};
-    key <AD08>	{ [         i,          I,        equal,     idotless ]	};
-    key <AD09>	{ [         o,          O,         plus,           OE ]	};
-    key <AD10>	{ [         p,          P,      percent,     Greek_PI ]	};
-//    key <AD11>	{ [     aring,  Aring, dead_diaeresis, dead_abovering ]	};
-//    key <AD12>	{ [dead_diaeresis, dead_circumflex, dead_tilde, dead_caron ] };
-
-
-    key <AC01>	{ [         a,          A,  bracketleft,    masculine ]	};
-    key <AC02>	{ [         s,          S, bracketright,      section ]	};
-    key <AC03>	{ [         d,          D,    parenleft,          ETH ]	};
-    key <AC04>	{ [         f,          F,   parenright,  ordfeminine ]	};
-    key <AC05>	{ [         g,          G,     asterisk,          ENG ]	};
-    key <AC06>	{ [         h,          H,     quotedbl,      Hstroke ]	};
-    key <AC07>	{ [         j,          J,   apostrophe,    dead_horn ] };
-    key <AC08>	{ [         k,          K,        slash,    ampersand ]	};
-    key <AC09>	{ [         l,          L,       exclam,      Lstroke ]	};
-    key <AC10>	{ [    oslash,   Ooblique,       oslash, dead_doubleacute ] }; 
-//    key <AC11>	{ [        ae,         AE, dead_circumflex, dead_caron]	};
-
-    //ATT!! the first oslash is being highjacked in the evdev script.
-    //but when we press it twice, it is there in the altgr group.
-
-//    key <BKSL>	{ [apostrophe,   asterisk, dead_doubleacute, multiply ]	};
-//    key <AB01>	{ [         z,          Z, guillemotleft,        less ]	};
-    key <AB02>	{ [         x,          X,    braceleft,    greater ]	};
-    key <AB03>	{ [         c,          C,   braceright,    copyright ]	};
-    key <AB04>	{ [         v,          V,       dollar, leftsinglequotemark ]	};
-    key <AB05>	{ [         b,          B,     currency, rightsinglequotemark ] };
-    key <AB06>	{ [         n,          N,          bar,            N ]	};
-    key <AB07>	{ [         m,          M,        grave,    masculine ]	};
-    key <AB08>	{ [     comma,  semicolon,    backslash,  dead_ogonek ]	};
-    key <AB09>	{ [    period,      colon,  asciicircum, periodcentered ]	};
-//    key <AB10>	{ [     minus, underscore,       endash,       emdash ]	};
-
-//    key <LSGT>	{ [      less,    greater,      onehalf, threequarters]	};
-};
-```
+  [deadcaps example map](symbols/deadcaps3)
 
 2. Open `sudo gedit /usr/share/X11/xkb/rules/evdev.xml` and insert the following snippet inside the existing text.
 (Don't paste the whole text, only paste the content inside the comments.)
