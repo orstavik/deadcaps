@@ -1,0 +1,53 @@
+// based on a keyboard map from an 'xkb/symbols/no' file
+
+default  partial alphanumeric_keys
+xkb_symbols "deadcaps3" {
+
+    // Adds deadcaps and deadless support to a norwegian keyboard.
+    // "NoSymbol" means no changes, the original mapping is not changed. 
+
+    include "no(basic)"
+
+    name[Group1]="Norwegian (deadcaps3)";
+
+    key <AD01>	{ [  NoSymbol,   NoSymbol,     question,    NoSymbol ] };
+    key <AD02>	{ [  NoSymbol,   NoSymbol,   asciitilde,    NoSymbol ] };
+    key <AD03>	{ [  NoSymbol,   NoSymbol,         less,    NoSymbol ] };
+    key <AD04>	{ [  NoSymbol,   NoSymbol,      greater,    NoSymbol ] };
+    key <AD05>	{ [  NoSymbol,   NoSymbol,   numbersign,    NoSymbol ] };
+    key <AD06>	{ [  NoSymbol,   NoSymbol,    ampersand,    NoSymbol ] };
+    key <AD07>	{ [  NoSymbol,   NoSymbol,           at,    NoSymbol ] };
+    key <AD08>	{ [  NoSymbol,   NoSymbol,        equal,    NoSymbol ] };
+    key <AD09>	{ [  NoSymbol,   NoSymbol,         plus,    NoSymbol ] };
+    key <AD10>	{ [  NoSymbol,   NoSymbol,      percent,    NoSymbol ] };
+//    key <AD11>	{ [     aring,  Aring, dead_diaeresis, dead_abovering ]	};
+//    key <AD12>	{ [dead_diaeresis, dead_circumflex, dead_tilde, dead_caron ] };
+
+
+    key <AC01>	{ [  NoSymbol,   NoSymbol,  bracketleft,    NoSymbol ] };
+    key <AC02>	{ [  NoSymbol,   NoSymbol, bracketright,    NoSymbol ] };
+    key <AC03>	{ [  NoSymbol,   NoSymbol,    parenleft,    NoSymbol ] };
+    key <AC04>	{ [  NoSymbol,   NoSymbol,   parenright,    NoSymbol ] };
+    key <AC05>	{ [  NoSymbol,   NoSymbol,     asterisk,    NoSymbol ] };
+    key <AC06>	{ [  NoSymbol,   NoSymbol,     quotedbl,    NoSymbol ] };
+    key <AC07>	{ [  NoSymbol,   NoSymbol,   apostrophe,    NoSymbol ] };
+    key <AC08>	{ [  NoSymbol,   NoSymbol,        slash,    NoSymbol ] };
+    key <AC09>	{ [  NoSymbol,   NoSymbol,       exclam,    NoSymbol ] };
+    key <AC10>	{ [  NoSymbol,   NoSymbol,       oslash,    NoSymbol ] };
+//    key <AC11>	{ [        ae,         AE, dead_circumflex, dead_caron]	};
+//    key <BKSL>	{ [apostrophe,   asterisk, dead_doubleacute, multiply ]	};
+
+
+//    key <LSGT>	{ [  Num_Lock,   Num_Lock,     Num_Lock,      Num_Lock]	};
+//    key <AB01>	{ [  NoSymbol,   NoSymbol, guillemotleft,        less ]	};
+    key <AB02>	{ [  NoSymbol,   NoSymbol,    braceleft,    NoSymbol ] };
+    key <AB03>	{ [  NoSymbol,   NoSymbol,   braceright,    NoSymbol ] };
+    key <AB04>	{ [  NoSymbol,   NoSymbol,       dollar,    NoSymbol ] };
+    key <AB05>	{ [  NoSymbol,   NoSymbol,     currency,    NoSymbol ] };
+    key <AB06>	{ [  NoSymbol,   NoSymbol,          bar,    NoSymbol ] };
+    key <AB07>	{ [  NoSymbol,   NoSymbol,        grave,    NoSymbol ] };
+    key <AB08>	{ [  NoSymbol,   NoSymbol,    backslash,    NoSymbol ] };
+    key <AB09>	{ [  NoSymbol,   NoSymbol,  asciicircum,    NoSymbol ] };
+//    key <AB10>	{ [     minus, underscore,       endash,       emdash ]	};
+
+};
