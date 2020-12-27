@@ -56,7 +56,7 @@ def deadlessKey(key, homePageMode):
         return homePageArrows[key]
     if key in arrows:
         return arrows[key]
-    return null 
+    return False 
     
 def deadlessIt(key, ctrl, shift):
     list = wrapModifierKeys([InputEvent(key, 1)], ctrl, shift, False)
