@@ -38,12 +38,12 @@ xkb_symbols "deadcaps3" {
 //    key <BKSL>	{ [apostrophe,   asterisk, dead_doubleacute, multiply ]	};
 
 
-//    key <LSGT>	{ [  Num_Lock,   Num_Lock,     Num_Lock,      Num_Lock]	};
-//    key <AB01>	{ [  NoSymbol,   NoSymbol, guillemotleft,        less ]	};
+//    key <LSGT>	{ [  NoSymbol,   NoSymbol,     NoSymbol,    NoSymbol]	};
+    key <AB01>	{ [  NoSymbol,   NoSymbol,       dollar,    NoSymbol ]	};
     key <AB02>	{ [  NoSymbol,   NoSymbol,    braceleft,    NoSymbol ] };
     key <AB03>	{ [  NoSymbol,   NoSymbol,   braceright,    NoSymbol ] };
-    key <AB04>	{ [  NoSymbol,   NoSymbol,       dollar,    NoSymbol ] };
-    key <AB05>	{ [  NoSymbol,   NoSymbol,     currency,    NoSymbol ] };
+    key <AB04>	{ [  NoSymbol,   NoSymbol,     currency,    NoSymbol ] };
+//    key <AB05>	{ [  NoSymbol,   NoSymbol,     NoSymbol,    NoSymbol ] };
     key <AB06>	{ [  NoSymbol,   NoSymbol,          bar,    NoSymbol ] };
     key <AB07>	{ [  NoSymbol,   NoSymbol,        grave,    NoSymbol ] };
     key <AB08>	{ [  NoSymbol,   NoSymbol,    backslash,    NoSymbol ] };
