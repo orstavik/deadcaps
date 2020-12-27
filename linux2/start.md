@@ -62,7 +62,7 @@ You can debug your configuration using: `xkbcomp -i 12 /usr/share/X11/xkb/symbol
     * `sudo apt-get install -y python3-pip`
     * `sudo pip install libevdev`
 
-2. Make `/usr/sbin/deadcaps.py`:
+2. Make [`/usr/sbin/deadcaps.py`](deadcaps.py):
 
 ```python
 #!/usr/bin/env python3
