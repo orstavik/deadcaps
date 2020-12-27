@@ -11,7 +11,7 @@
 1. Make your deadcaps keyboard layout file using: `sudo gedit /usr/share/X11/xkb/symbols/deadcaps`.
 You can debug your configuration using: `xkbcomp -i 12 /usr/share/X11/xkb/symbols/deadcaps $display`.
 
-  [deadcaps example map](symbols/deadcaps3)
+  [deadcaps example map](symbols/deadcaps)
 
 2. Open `sudo gedit /usr/share/X11/xkb/rules/evdev.xml` and insert the following snippet inside the existing text.
 (Don't paste the whole text, only paste the content inside the comments.)
