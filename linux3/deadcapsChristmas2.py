@@ -2,6 +2,17 @@
 # there are so many mysterious bugs and ducks in a row when working with both xkb and python,
 # that the cost of keeping xkb outweigh the benefit. im going to try to ride one horse, not two.
 
+# not sure how the navigation is best managed. 
+# I think that i need to have the common operations put next to each other.
+# i have some editing and some correction. different tasks.
+# ctrl + shift pluss left and right
+# shift + up and down
+# pageup
+# pagedown
+# delete and backspace with and without ctrl
+# home and end
+# ctrl c,v,x,a,z
+
 #!/usr/bin/env python3
 # CAPS (auto revert after one other keydown or CAPS to CAPSLOCK)
 # CAPSLOCK (turn off when CAPS) (this is done by the system).
