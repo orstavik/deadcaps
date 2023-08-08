@@ -57,8 +57,10 @@ DeadCaps is fairly unobtrusive. It alters as little as possible of the normal op
 
 ## Future work
 
+Implement deadless as a single press for ctrl, and a double press for navigation.
+
 Implement a working mechanism for navigation. This is difficult as many text editors seem to rely on keycodes and not keysymbols for navigation, thus rendering custom keyboard setups impossible to use.
 
 
 
- This is demonstrated by  fast typist: writing 150wpm is possible, and using shift, altgr, and normal caps lock only reduces
+This is demonstrated by  fast typist: writing 150wpm is possible, and using shift, altgr, and normal caps lock only reduces
