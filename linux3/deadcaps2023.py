@@ -13,55 +13,6 @@ import fcntl
 from libevdev import InputEvent
 
 
-def selectDevice():
-    print("")
-    print("    Select keyboard to use with deadcaps:")
-    print("")
-    event_number = 0
-    while True:
-        event_path = f"/dev/input/event{event_number}"
-        if not os.path.exists(event_path):
-            break
-        with open(event_path, "rb") as fd:
-            fcntl.fcntl(fd, fcntl.F_SETFL, os.O_NONBLOCK)
-            device = libevdev.Device(fd)
-            if device.has(libevdev.EV_KEY.KEY_A):
-                print(f"    [{event_number}]: {device.name} {len(device.evbits)}")
-        event_number += 1
-    res = input()
-    return "/dev/input/event" + res
-
-
-def debug(msg, e, caps_state):
-    print("{}. CAPS_STATE: {}. Event type: {:02x} {} code {:03x} {:12s} value{:1d}".format(msg, caps_state, e.type.value, e.type.name, e.code.value, e.code.name, e.value))
-
-#def downUp(code):
-#    return [InputEvent(code, 1), InputEvent(code, 0)]
-#
-#def shift(events):
-#    events.insert(0, InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT,1))
-#    events.append(InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT,0))
-#    return events
-#
-#def ctrl(events):
-#    events.insert(0, InputEvent(libevdev.EV_KEY.KEY_LEFTCTRL,1))
-#    events.append(InputEvent(libevdev.EV_KEY.KEY_LEFTCTRL,0))
-#    return events
-#
-#def rightAlt(events):
-#    events.insert(0, InputEvent(libevdev.EV_KEY.KEY_RIGHTALT,1))
-#    events.append(InputEvent(libevdev.EV_KEY.KEY_RIGHTALT,0))
-#    return events
-#
-#def appendSpace(events):
-#    events.append(InputEvent(libevdev.EV_KEY.KEY_SPACE, 1))
-#    events.append(InputEvent(libevdev.EV_KEY.KEY_SPACE, 0))
-#    return events
-#
-#def syn(events):
-#    events.append(InputEvent(libevdev.EV_SYN.SYN_REPORT,0))
-#    return events
-
 shift1 = InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT,1)
 shift0 = InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT,0)
 shift_msc = InputEvent(libevdev.EV_MSC.MSC_SCAN, 0x700e1) #left shift
@@ -225,119 +176,83 @@ deadlessNavi = {
 }
 """
 
-def main(path):
-    caps_state = 0
-    pinky_state = 0
-    
-    fd = open(path, 'rb')
-    d = libevdev.Device(fd)
-    d.grab()
-
-    # create a duplicate of our input device
-    caps = libevdev.evbit('KEY_CAPSLOCK')
-    d.enable(caps)  # make sure the code we map to is available
-    uidev = d.create_uinput_device()
-    print('Device is at {}'.format(uidev.devnode))
-
-    state = 'NORMAL'   #NORMAL/DEADCAPS/CAPSLOCK/SEMIDEAD/DEADLESS
-    lessJ = ''
-    lessK = ''
-    lessL = ''
-
+def selectDevice():
+    print("")
+    print("    Select keyboard to use with deadcaps:")
+    print("")
+    event_number = 0
     while True:
-        for e in d.events():
-                
-            # debug('keyboard: ', e, state)
+        event_path = f"/dev/input/event{event_number}"
+        if not os.path.exists(event_path):
+            break
+        with open(event_path, "rb") as fd:
+            fcntl.fcntl(fd, fcntl.F_SETFL, os.O_NONBLOCK)
+            device = libevdev.Device(fd)
+            if device.has(libevdev.EV_KEY.KEY_A):
+                print(f"    [{event_number}]: {device.name} {len(device.evbits)}")
+        event_number += 1
+    res = input()
+    return "/dev/input/event" + res
 
-            # ignore non-keypress events
-            if e.type.name != 'EV_KEY' :
-                uidev.send_events([e])
-                continue
 
-            # debug('keydown/keyup: ', e, state)
+def debug(msg, e, caps_state):
+    print("{}. CAPS_STATE: {}. Event type: {:02x} {} code {:03x} {:12s} value{:1d}".format(msg, caps_state, e.type.value, e.type.name, e.code.value, e.code.name, e.value))
 
-            key = e.code.name
-            ## keyup handlers
-            if e.value == 0:
-                # handling JKL modifier keys in navigation mode
-                """
-                if state == 'DEADLESS':
-                    if key == 'KEY_J':
-                        lessJ = ''
-                    elif key == 'KEY_K':
-                        lessK = ''
-                    elif key == 'KEY_L':
-                        lessL = ''
-                    continue
-                """
-                uidev.send_events([e])
-                continue
 
-            # debug('keydown: ', e, state)
+def state_normal(e, key, uidev):
+    if key == 'KEY_CAPSLOCK':
+        return state_deadcaps
+    if key == 'KEY_SEMICOLON':
+        return state_semidead
+#     if key == 'KEY_102ND':          # < less than key
+#         return state_deadless
+    uidev.send_events([e])
+    return state_normal
 
-            ## keydown handlers
-            #default state. intercept deadkeys, otherwise do nothing.
-            if state == 'NORMAL':
-                if key == 'KEY_CAPSLOCK':
-                    state = 'DEADCAPS'
-                elif key == 'KEY_SEMICOLON':
-                    state = 'SEMIDEAD'
-#                elif key == 'KEY_102ND':          # < less than key
-#                    state = 'DEADLESS'
-                else :
-                    uidev.send_events([e])
-                continue
+def state_deadcaps(e, key, uidev):
+    if key == 'KEY_CAPSLOCK':
+        uidev.send_events([e])
+        return state_capslock
+    uidev.send_events([shift1, syn0])
+    time.sleep(0.004)  #sleephack :(
+    uidev.send_events([e, syn0, shift0, syn0])
+    return state_normal
+    
+def state_capslock(e,key,uidev):
+    uidev.send_events([e])
+    if key == 'KEY_CAPSLOCK':
+        return state_normal
+    return state_capslock
 
-            if state == 'CAPSLOCK':
-                if key == 'KEY_CAPSLOCK':
-                    state = 'NORMAL'
-                uidev.send_events([e])
-                continue
+def state_semidead(e,key,uidev):
+    if key == 'KEY_CAPSLOCK':  # caps key doesnt work in semidead state
+        return state_normal
+    if key in semidead :
+        for ev in semidead[key] :
+            if ev == 'sleep' :
+                time.sleep(0.004) #sleephack :(
+            else :
+                uidev.send_events([ev, syn0])
+    else :
+         uidev.send_events([e])
+    return state_normal
 
-            if state == 'DEADCAPS':
-                if key == 'KEY_CAPSLOCK':
-                    state = 'CAPSLOCK'
-                    uidev.send_events([e])
-                else:
-                    state = 'NORMAL'
-                    uidev.send_events([shift1, syn0])
-                    time.sleep(0.004)  #sleephack :(
-                    uidev.send_events([e, syn0, shift0, syn0])
-                continue
-            
-            if key == 'KEY_CAPSLOCK':       # caps key doesnt work in semidead or deadless state
-                continue
-            
-            if state == 'SEMIDEAD' :
-                state = 'NORMAL'
-                if key in semidead :
-                    for ev in semidead[key] :
-                        if ev == 'sleep' :
-                            time.sleep(0.004) #sleephack :(
-                        else :
-                            uidev.send_events([ev, syn0])
-                else :
-                    uidev.send_events([e])
-                continue
-            
-#            if state == 'DEADLESS':
-#                if key == 'KEY_102ND' or key == 'KEY_SPACE':
-#                    state = 'NORMAL'
-#                elif key == 'KEY_J':
-#                    lessJ = 'ctrl'
-#                elif key == 'KEY_K':
-#                    lessK = 'shift'
-#                elif key == 'KEY_L':
-#                    lessL = 'alt'
-#                else:
-#                    if key in deadless:
-#                         keys = deadless[key]
-#                    else:
-#                        key += lessL + lessK + lessJ
-#                        print(key)
-#                        keys = deadlessNavi[key] if key in deadlessNavi else [e]
-#                    uidev.send_events(keys)
-#                continue
+def open_clone_keyboard(kb_path):
+    fd = open(kb_path, 'rb')
+    kb = libevdev.Device(fd)
+    kb.grab()
+    clone = kb.create_uinput_device()
+    print('Device is at {}'.format(clone.devnode))
+    return (kb, clone)
+
+def event_loop(kb, kb_clone):
+    state = state_normal
+    for e in kb.events():
+        # debug('event: ', e, state.__name__)
+        if e.type.name != 'EV_KEY' or e.value == 0:
+            kb_clone.send_events([e])
+        else :
+            state = state(e, e.code.name, kb_clone)
 
 
 if __name__ == "__main__":
@@ -345,8 +260,7 @@ if __name__ == "__main__":
     print("## Welcome to deadcaps! ##")
     print("##########################")
     path = selectDevice()
-    
     #enter bug. Wait for enter key to be released when called from command prompt.
     #250ms is default delay before repeated keystrokes.
-    time.sleep(0.25)	
-    main(path)
+    time.sleep(0.25)
+    event_loop(*open_clone_keyboard(path))
