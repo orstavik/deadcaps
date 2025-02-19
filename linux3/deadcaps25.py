@@ -209,13 +209,18 @@ def state_normal(e, key, uidev):
     uidev.send_events([e])
     return state_normal
 
+def send_events(uidev, events):
+    for ev in events:
+        if ev == 'sleep':
+            time.sleep(0.004)         # sleephack :(
+        else:
+            uidev.send_events([ev, syn0])
+
 def state_deadcaps(e, key, uidev):
     if key == 'KEY_CAPSLOCK':
         uidev.send_events([e])
         return state_capslock
-    uidev.send_events([shift1, syn0])
-    time.sleep(0.004)  #sleephack :(
-    uidev.send_events([e, syn0, shift0, syn0])
+    send_events(uidev, [shift1, 'sleep', e, shift0])
     return state_normal
     
 def state_capslock(e,key,uidev):
@@ -228,11 +233,7 @@ def state_semidead(e,key,uidev):
     if key == 'KEY_CAPSLOCK':  # caps key doesnt work in semidead state
         return state_normal
     if key in semidead :
-        for ev in semidead[key] :
-            if ev == 'sleep' :
-                time.sleep(0.004) #sleephack :(
-            else :
-                uidev.send_events([ev, syn0])
+        send_events(uidev, semidead[key])
     else :
          uidev.send_events([e])
     return state_normal
