@@ -314,6 +314,29 @@ def selectDevice():
 #         print(f"Error: Permission denied for '{path}'. Did you run with sudo?")
 #         sys.exit(1)
 
+# kb = {"name", "id","event", "path"}
+def runDevice(kb):
+    while True:
+        try:
+            fd = open(kb["path"], 'rb')
+            _kb = libevdev.Device(fd)
+            _kb.grab()
+            clone = _kb.create_uinput_device()
+            print('Device is at {}'.format(clone.devnode))
+            event_loop(_kb, clone)
+        except OSError as error:
+            if error.errno not in (errno.ENOENT, errno.ENODEV):
+                raise
+            print(f"Keyboard stream ended: {kb['name']}. Waiting for reconnect...")
+            while True:
+                time.sleep(1)
+                replacement = next((device for device in findKeyboards() if device["id"] == kb["id"]), None,)
+                if replacement is None:
+                    continue
+                kb = replacement
+                break
+            continue
+
 def main():
     print("##########################")
     print("## Welcome to deadcaps! ##")
@@ -352,26 +375,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# kb = {"name", "id","event", "path"}
-def runDevice(kb):
-    while True:
-        try:
-            fd = open(kb["path"], 'rb')
-            _kb = libevdev.Device(fd)
-            _kb.grab()
-            clone = _kb.create_uinput_device()
-            print('Device is at {}'.format(clone.devnode))
-            event_loop(_kb, clone)
-        except OSError as error:
-            if error.errno not in (errno.ENOENT, errno.ENODEV):
-                raise
-            print(f"Keyboard stream ended: {kb['name']}. Waiting for reconnect...")
-            while True:
-                time.sleep(1)
-                replacement = next((device for device in findKeyboards() if device["id"] == kb["id"]), None,)
-                if replacement is None:
-                    continue
-                kb = replacement
-                break
-            continue
