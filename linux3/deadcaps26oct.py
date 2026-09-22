@@ -7,11 +7,10 @@
 
 import time
 import os
-import OSError
+import errno
 import sys
 import signal
 import libevdev
-import fcntl
 from libevdev import InputEvent
 
 
@@ -256,6 +255,7 @@ def findKeyboards():
                     "name": device.name,
                     "id": kid,
                     "event": entry,
+                    "path": f"/dev/input/{entry}",
                 })
         except (PermissionError, OSError):
             continue
@@ -266,50 +266,53 @@ def selectDevice():
     if not keyboards:
         print("No keyboards found. Please check that keyboards are connected.")
         sys.exit(1)
-    print("")
-    print("    keyboards found:")
+    if len(keyboards) == 1:
+        print(f"Only one keyboard {keyboards[0]['name']} found, using that.")
+        return keyboards
+
+    print("KEYBOARDS:")
     for k in keyboards:
         print(f"    -->{k['event'].split('event', 1)[1]}<--: {k['name']}")
     print("")
 
-    print("Please select a keyboard by entering the number after 'event' (e.g., 0 for /dev/input/event0).")
-    print("Press Enter without typing a number to use all detected keyboards.")
+    print("Press Enter directly to select all keyboards.")
+    print("Or select a single keyboard by entering the -->number<-- and Enter.")
     res = input()
     if not res:
-        return [f"/dev/input/{k['event']}" for k in keyboards]
+        return keyboards
     #if the res is not a valid number and one of the event numbers, prompt again
     res = f"event{res}"
     if not any(k["event"] == res for k in keyboards):
         print(f"Invalid selection: {res}. Please enter a valid event number.")
         return selectDevice()
-    return [f"/dev/input/{res}"]
+    return [k for k in keyboards if k["event"] == res]
     
-def wait_for_reconnected_keyboard(wanted_id, wanted_name):
-    print(f"Keyboard disconnected: {wanted_name}. Waiting for it to reconnect...")
-    while True:
-        time.sleep(1)
-        replacement = next((device for device in findKeyboards() if device["id"] == wanted_id), None,)
-        if replacement is None:
-            continue
-        path = f'/dev/input/{replacement["event"]}'
-        try:
-            kb, kb_clone = open_clone_keyboard(path)
-        except OSError as error:
-            if error.errno not in (errno.ENOENT, errno.ENODEV):
-                raise
-            continue
-        print(f"Keyboard reconnected: {wanted_name} ({path})")
-        return kb, kb_clone
+# def wait_for_reconnected_keyboard(wanted_id, wanted_name):
+#     print(f"Keyboard disconnected: {wanted_name}. Waiting for it to reconnect...")
+#     while True:
+#         time.sleep(1)
+#         replacement = next((device for device in findKeyboards() if device["id"] == wanted_id), None,)
+#         if replacement is None:
+#             continue
+#         path = f'/dev/input/{replacement["event"]}'
+#         try:
+#             kb, kb_clone = open_clone_keyboard(path)
+#         except OSError as error:
+#             if error.errno not in (errno.ENOENT, errno.ENODEV):
+#                 raise
+#             continue
+#         print(f"Keyboard reconnected: {wanted_name} ({path})")
+#         return kb, kb_clone
 
-def runDevice(path):
-    try:
-        event_loop(*open_clone_keyboard(path))
-    except FileNotFoundError:
-        print(f"Error: The device path '{path}' does not exist.")
-        sys.exit(1)
-    except PermissionError:
-        print(f"Error: Permission denied for '{path}'. Did you run with sudo?")
-        sys.exit(1)
+# def runDevice(path):
+#     try:
+#         event_loop(*open_clone_keyboard(path))
+#     except FileNotFoundError:
+#         print(f"Error: The device path '{path}' does not exist.")
+#         sys.exit(1)
+#     except PermissionError:
+#         print(f"Error: Permission denied for '{path}'. Did you run with sudo?")
+#         sys.exit(1)
 
 def main():
     print("##########################")
@@ -319,12 +322,7 @@ def main():
         print("You forgot sudo! Please run this script as root.")
         sys.exit(1)
 
-    if len(sys.argv) > 1:
-        res = sys.argv[1]
-        path = [f"/dev/input/event{res}"]
-        print(f"Bypassing prompt, using device from argument: {path}")
-    else:
-        path = selectDevice()
+    path = selectDevice()
 
     # enter bug. Wait for enter key to be released when called from command prompt.
     # 250ms is default delay before repeated keystrokes.
@@ -354,3 +352,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# kb = {"name", "id","event", "path"}
+def runDevice(kb):
+    while True:
+        try:
+            fd = open(kb["path"], 'rb')
+            _kb = libevdev.Device(fd)
+            _kb.grab()
+            clone = _kb.create_uinput_device()
+            print('Device is at {}'.format(clone.devnode))
+            event_loop(_kb, clone)
+        except OSError as error:
+            if error.errno not in (errno.ENOENT, errno.ENODEV):
+                raise
+            print(f"Keyboard stream ended: {kb['name']}. Waiting for reconnect...")
+            while True:
+                time.sleep(1)
+                replacement = next((device for device in findKeyboards() if device["id"] == kb["id"]), None,)
+                if replacement is None:
+                    continue
+                kb = replacement
+                break
+            continue
