@@ -261,7 +261,7 @@ def findKeyboards():
             continue
     return keyboards
 
-def selectDevice():
+def selectDevice(auto):
     keyboards = findKeyboards()
     if not keyboards:
         print("No keyboards found. Please check that keyboards are connected.")
@@ -269,12 +269,14 @@ def selectDevice():
     if len(keyboards) == 1:
         print(f"Only one keyboard {keyboards[0]['name']} found, using that.")
         return keyboards
-
     print("KEYBOARDS:")
     for k in keyboards:
         print(f"    -->{k['event'].split('event', 1)[1]}<--: {k['name']}")
+    if auto:
+        print(f"Auto mode enabled. Using all keyboards.")
+        return keyboards
+    
     print("")
-
     print("Press Enter directly to select all keyboards.")
     print("Or select a single keyboard by entering the -->number<-- and Enter.")
     res = input()
@@ -291,12 +293,12 @@ def selectDevice():
 # kb = {"name", "id","event", "path"}
 def runDevice(kb):
     while True:
+        fd = open(kb["path"], 'rb')
+        _kb = libevdev.Device(fd)
+        _kb.grab()
+        clone = _kb.create_uinput_device()
+        print('Device is at {}'.format(clone.devnode))
         try:
-            fd = open(kb["path"], 'rb')
-            _kb = libevdev.Device(fd)
-            _kb.grab()
-            clone = _kb.create_uinput_device()
-            print('Device is at {}'.format(clone.devnode))
             event_loop(_kb, clone)
         except OSError as error:
             if error.errno not in (errno.ENOENT, errno.ENODEV):
@@ -310,16 +312,21 @@ def runDevice(kb):
                 kb = replacement
                 break
             continue
+        finally:
+            clone.destroy()
+            fd.close()
 
 def main():
     print("##########################")
     print("## Welcome to deadcaps! ##")
+    print("##  use --auto for all  ##")
     print("##########################")
     if os.geteuid() != 0:
         print("You forgot sudo! Please run this script as root.")
         sys.exit(1)
 
-    path = selectDevice()
+    auto = (len(sys.argv) > 1 and sys.argv[1] == "--auto")
+    path = selectDevice(auto)
 
     # enter bug. Wait for enter key to be released when called from command prompt.
     # 250ms is default delay before repeated keystrokes.
