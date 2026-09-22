@@ -287,32 +287,6 @@ def selectDevice():
         return selectDevice()
     return [k for k in keyboards if k["event"] == res]
     
-# def wait_for_reconnected_keyboard(wanted_id, wanted_name):
-#     print(f"Keyboard disconnected: {wanted_name}. Waiting for it to reconnect...")
-#     while True:
-#         time.sleep(1)
-#         replacement = next((device for device in findKeyboards() if device["id"] == wanted_id), None,)
-#         if replacement is None:
-#             continue
-#         path = f'/dev/input/{replacement["event"]}'
-#         try:
-#             kb, kb_clone = open_clone_keyboard(path)
-#         except OSError as error:
-#             if error.errno not in (errno.ENOENT, errno.ENODEV):
-#                 raise
-#             continue
-#         print(f"Keyboard reconnected: {wanted_name} ({path})")
-#         return kb, kb_clone
-
-# def runDevice(path):
-#     try:
-#         event_loop(*open_clone_keyboard(path))
-#     except FileNotFoundError:
-#         print(f"Error: The device path '{path}' does not exist.")
-#         sys.exit(1)
-#     except PermissionError:
-#         print(f"Error: Permission denied for '{path}'. Did you run with sudo?")
-#         sys.exit(1)
 
 # kb = {"name", "id","event", "path"}
 def runDevice(kb):
