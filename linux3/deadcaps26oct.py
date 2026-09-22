@@ -8,6 +8,7 @@
 import time
 import os
 import errno
+import gc
 import sys
 import signal
 import libevdev
@@ -313,8 +314,9 @@ def runDevice(kb):
                 break
             continue
         finally:
-            clone.destroy()
+            del clone
             fd.close()
+            gc.collect()
 
 def main():
     print("##########################")
