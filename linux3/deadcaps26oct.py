@@ -10,9 +10,10 @@ import os
 import errno
 import gc
 import sys
-import signal
+from multiprocessing import Process
 import libevdev
 from libevdev import InputEvent
+
 
 
 shift1 = InputEvent(libevdev.EV_KEY.KEY_LEFTSHIFT,1)
@@ -222,14 +223,6 @@ def state_semidead(e,key,uidev):
          uidev.send_events([e])
     return state_normal
 
-def open_clone_keyboard(kb_path):
-    fd = open(kb_path, 'rb')
-    kb = libevdev.Device(fd)
-    kb.grab()
-    clone = kb.create_uinput_device()
-    print('Device is at {}'.format(clone.devnode))
-    return (kb, clone)
-
 def event_loop(kb, kb_clone):
     state = state_normal
     for e in kb.events():
@@ -247,6 +240,8 @@ def findKeyboards():
         try:
             with open(f"/dev/input/{entry}", "rb") as fd:
                 device = libevdev.Device(fd)
+                if (device.name or "").startswith("DeadCaps: "):
+                    continue
                 if not device.has(libevdev.EV_KEY.KEY_A):
                     continue
                 kid = ( ("uniq", device.uniq) if device.uniq else ("phys", (device.phys or "").rsplit("/input", 1)[0]) )
@@ -262,99 +257,56 @@ def findKeyboards():
             continue
     return keyboards
 
-def selectDevice(auto):
-    keyboards = findKeyboards()
-    if not keyboards:
-        print("No keyboards found. Please check that keyboards are connected.")
-        sys.exit(1)
-    if len(keyboards) == 1:
-        print(f"Only one keyboard {keyboards[0]['name']} found, using that.")
-        return keyboards
-    print("KEYBOARDS:")
-    for k in keyboards:
-        print(f"    -->{k['event'].split('event', 1)[1]}<--: {k['name']}")
-    if auto:
-        print(f"Auto mode enabled. Using all keyboards.")
-        return keyboards
-    
-    print("")
-    print("Press Enter directly to select all keyboards.")
-    print("Or select a single keyboard by entering the -->number<-- and Enter.")
-    res = input()
-    if not res:
-        return keyboards
-    #if the res is not a valid number and one of the event numbers, prompt again
-    res = f"event{res}"
-    if not any(k["event"] == res for k in keyboards):
-        print(f"Invalid selection: {res}. Please enter a valid event number.")
-        return selectDevice()
-    return [k for k in keyboards if k["event"] == res]
-    
-
 # kb = {"name", "id","event", "path"}
 def runDevice(kb):
-    while True:
-        fd = open(kb["path"], 'rb')
-        _kb = libevdev.Device(fd)
-        _kb.grab()
-        clone = _kb.create_uinput_device()
-        print('Device is at {}'.format(clone.devnode))
-        try:
-            event_loop(_kb, clone)
-        except OSError as error:
-            if error.errno not in (errno.ENOENT, errno.ENODEV):
-                raise
-            print(f"Keyboard stream ended: {kb['name']}. Waiting for reconnect...")
+    try:
+        with open(kb["path"], 'rb') as fd:
+            # Do not capture the Enter press used to request a rescan.
             while True:
-                time.sleep(1)
-                replacement = next((device for device in findKeyboards() if device["id"] == kb["id"]), None,)
-                if replacement is None:
-                    continue
-                kb = replacement
-                break
-            continue
-        finally:
-            del clone
-            fd.close()
-            gc.collect()
+                device = libevdev.Device(fd)
+                device.grab()
+                current = libevdev.Device(fd)
+                if not any(current.value[c] for c in current.evbits[libevdev.EV_KEY]):
+                    break
+                device.ungrab()
+                time.sleep(0.05)
+            device.name = "DeadCaps: " + kb["name"]
+            clone = device.create_uinput_device()
+            print(f"Active: {kb['name']} ({clone.devnode})", flush=True)
+            event_loop(device, clone)
+    finally:
+        print(f"Process stopped: {kb['name']}", flush=True)
 
 def main():
     print("##########################")
     print("## Welcome to deadcaps! ##")
-    print("##  use --auto for all  ##")
     print("##########################")
     if os.geteuid() != 0:
         print("You forgot sudo! Please run this script as root.")
         sys.exit(1)
 
-    auto = (len(sys.argv) > 1 and sys.argv[1] == "--auto")
-    path = selectDevice(auto)
+    workers = {}
 
-    # enter bug. Wait for enter key to be released when called from command prompt.
-    # 250ms is default delay before repeated keystrokes.
-    time.sleep(0.25)
-    # start a new process for each selected device path
-    children = []
-    def cleanup(signum, frame):
-        for pid in children:
-            try:
-                os.kill(pid, signal.SIGTERM)
-            except ProcessLookupError:
-                pass
-        sys.exit(0)
+    def cleanup(end=False):
+        for kid, worker in list(workers.items()):
+            if end or not worker.is_alive():
+                if worker.is_alive():
+                    worker.terminate()
+                worker.join()
+                worker.close()
+                del workers[kid]
 
-    signal.signal(signal.SIGINT, cleanup)
-    signal.signal(signal.SIGTERM, cleanup)
-
-    for p in path[1:]:
-        pid = os.fork()
-    
-        if pid == 0:
-            runDevice(p)
-            sys.exit(0)
-        children.append(pid)
-    
-    runDevice(path[0])
+    try:
+        while True:
+            cleanup(end=False)
+            keyboards = [kb for kb in findKeyboards() if kb["id"] not in workers]
+            for kb in keyboards:
+                worker = Process(target=runDevice, args=(kb,), daemon=True)
+                worker.start()
+                workers[kb["id"]] = worker
+            input("Press Enter to scan for keyboards again; Ctrl+C to exit.\n")
+    finally:
+        cleanup(end=True)
 
 if __name__ == "__main__":
     main()
